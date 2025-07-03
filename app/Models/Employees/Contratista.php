@@ -6,7 +6,7 @@ class Contratista extends Empleado
 {
     protected $montoContrato;
 
-    public function __construct(string $id, string $nombre, string $infoContacto, float $montoContrato)
+    public function __construct(?int $id, string $nombre, string $infoContacto, float $montoContrato)
     {
         parent::__construct($id, $nombre, $infoContacto);
         $this->montoContrato = $montoContrato;

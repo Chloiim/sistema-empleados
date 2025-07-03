@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Reports;
+namespace App\Services\Reports;
 
 use App\Contracts\Reporteable;
 use Barryvdh\DomPDF\Facade\Pdf;

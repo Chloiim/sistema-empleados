@@ -38,17 +38,17 @@
             </div>
             <div id="tiempo_completo_fields" class="mb-3" style="display: none;">
                 <label for="salario_mensual" class="form-label">Salario Mensual (PEN)</label>
-                <input type="number" step="0.01" name="salario_mensual" id="salario_mensual" class="form-control">
+                <input type="number" step="0.01" name="salario_mensual" id="salario_mensual" class="form-control" value="0.00">
             </div>
             <div id="medio_tiempo_fields" class="mb-3" style="display: none;">
                 <label for="tarifa_hora" class="form-label">Tarifa por Hora (PEN)</label>
-                <input type="number" step="0.01" name="tarifa_hora" id="tarifa_hora" class="form-control">
+                <input type="number" step="0.01" name="tarifa_hora" id="tarifa_hora" class="form-control" value="0.00">
                 <label for="horas_trabajadas" class="form-label">Horas Trabajadas</label>
-                <input type="number" step="0.01" name="horas_trabajadas" id="horas_trabajadas" class="form-control">
+                <input type="number" step="0.01" name="horas_trabajadas" id="horas_trabajadas" class="form-control" value="0.00">
             </div>
             <div id="contratista_fields" class="mb-3" style="display: none;">
                 <label for="monto_contrato" class="form-label">Monto del Contrato (PEN)</label>
-                <input type="number" step="0.01" name="monto_contrato" id="monto_contrato" class="form-control">
+                <input type="number" step="0.01" name="monto_contrato" id="monto_contrato" class="form-control" value="0.00">
             </div>
             <button type="submit" class="btn btn-primary">Guardar</button>
         </form>
@@ -59,6 +59,18 @@
             document.getElementById('tiempo_completo_fields').style.display = tipo === 'tiempo_completo' ? 'block' : 'none';
             document.getElementById('medio_tiempo_fields').style.display = tipo === 'medio_tiempo' ? 'block' : 'none';
             document.getElementById('contratista_fields').style.display = tipo === 'contratista' ? 'block' : 'none';
+
+            // Establecer valores predeterminados cuando se ocultan
+            if (tipo !== 'tiempo_completo') {
+                document.getElementById('salario_mensual').value = '0.00';
+            }
+            if (tipo !== 'medio_tiempo') {
+                document.getElementById('tarifa_hora').value = '0.00';
+                document.getElementById('horas_trabajadas').value = '0.00';
+            }
+            if (tipo !== 'contratista') {
+                document.getElementById('monto_contrato').value = '0.00';
+            }
         }
         // Ejecutar al cargar la página
         toggleFields();

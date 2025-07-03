@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Contratos\ContratoEmpleado;
+use App\Contracts\ContratoEmpleado;
 
 class CalculadorSalario
 {

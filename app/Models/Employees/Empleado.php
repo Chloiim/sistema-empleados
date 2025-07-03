@@ -2,7 +2,7 @@
 
 namespace App\Models\Employees;
 
-use App\Contratos\ContratoEmpleado;
+use App\Contracts\ContratoEmpleado;
 
 abstract class Empleado implements ContratoEmpleado
 {
@@ -10,16 +10,27 @@ abstract class Empleado implements ContratoEmpleado
     protected $nombre;
     protected $infoContacto;
 
-    public function __construct(string $id, string $nombre, string $infoContacto)
+    public function __construct(?int $id, string $nombre, string $infoContacto)
     {
-        $this->id = $id;
+        $this->id = $id ?? 0;
         $this->nombre = $nombre;
         $this->infoContacto = $infoContacto;
     }
 
     public function getId(): string
     {
-        return $this->id;
+        return (string)$this->id;
+    }
+
+    /**
+     * Establecer el ID del empleado (usado después de guardar en la base de datos).
+     *
+     * @param int $id
+     * @return void
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     public function getNombre(): string
@@ -31,4 +42,6 @@ abstract class Empleado implements ContratoEmpleado
     {
         return $this->infoContacto;
     }
+
+    abstract public function calcularSalario(): float;
 }

@@ -12,7 +12,7 @@ class CreateEmpleadosTable extends Migration
     public function up(): void
     {
         Schema::create('empleados', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
             $table->string('nombre');
             $table->string('tipo'); // tiempo_completo, medio_tiempo, contratista
             $table->string('info_contacto');

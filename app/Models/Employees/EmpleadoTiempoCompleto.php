@@ -6,7 +6,7 @@ class EmpleadoTiempoCompleto extends Empleado
 {
     protected $salarioMensual;
 
-    public function __construct(string $id, string $nombre, string $infoContacto, float $salarioMensual)
+    public function __construct(?int $id, string $nombre, string $infoContacto, float $salarioMensual)
     {
         parent::__construct($id, $nombre, $infoContacto);
         $this->salarioMensual = $salarioMensual;

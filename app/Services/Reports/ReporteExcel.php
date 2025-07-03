@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Reports;
+namespace AApp\Services\Reports;
 
 use App\Contracts\Reporteable;
 use Maatwebsite\Excel\Facades\Excel;

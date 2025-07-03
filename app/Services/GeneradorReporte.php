@@ -10,6 +10,17 @@ class GeneradorReporte
 
     public function __construct(Reporteable $reporteable)
     {
+        $this->reporteable = $reporteable ?: app(Reporteable::class); // Usar el binding por defecto si no se pasa
+    }
+
+    /**
+     * Establecer una implementación de reporteable manualmente.
+     *
+     * @param Reporteable $reporteable
+     * @return void
+     */
+    public function setReporteable(Reporteable $reporteable): void
+    {
         $this->reporteable = $reporteable;
     }
 

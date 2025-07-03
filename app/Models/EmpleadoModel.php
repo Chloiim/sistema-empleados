@@ -11,10 +11,8 @@ class EmpleadoModel extends Model
 
     protected $table = 'empleados';
     protected $primaryKey = 'id';
-    public $incrementing = false;
-    protected $keyType = 'string';
 
-    protected $fillable = ['id', 'nombre', 'tipo', 'info_contacto', 'datos_adicionales'];
+    protected $fillable = ['nombre', 'tipo', 'info_contacto', 'datos_adicionales'];
 
     protected $casts = [
         'datos_adicionales' => 'array',

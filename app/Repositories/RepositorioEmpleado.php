@@ -22,24 +22,24 @@ class RepositorioEmpleado
         $datosAdicionales = method_exists($empleado, 'getDatosAdicionales') ? 
         $empleado->getDatosAdicionales() : [];
 
-        EmpleadoModel::updateOrCreate(
-            ['id' => $empleado->getId()],
-            [
-                'nombre' => $empleado->getNombre(),
-                'tipo' => $tipo,
-                'info_contacto' => $empleado->getInfoContacto(),
-                'datos_adicionales' => $datosAdicionales,
-            ]
-        );
+        $modelo = new EmpleadoModel();
+        $modelo->nombre = $empleado->getNombre();
+        $modelo->tipo = $tipo;
+        $modelo->info_contacto = $empleado->getInfoContacto();
+        $modelo->datos_adicionales = $datosAdicionales;
+        $modelo->save();
+
+        // Asignar el ID generado por la base de datos al objeto empleado
+        $empleado->setId($modelo->id);
     }
 
     /**
      * Obtener un empleado por ID.
      *
-     * @param string $id
+     * @param int $id
      * @return Empleado|null
      */
-    public function obtener(string $id): ?Empleado
+    public function obtener(int $id): ?Empleado
     {
         $modelo = EmpleadoModel::find($id);
         if (!$modelo) {
@@ -72,5 +72,31 @@ class RepositorioEmpleado
             default:
                 return null;
         }
+        // Depuración temporal
+        if ($empleado instanceof \App\Contracts\ContratoEmpleado) {
+            \Log::info('Empleado implementa ContratoEmpleado: ' . get_class($empleado));
+        } else {
+            \Log::error('Empleado NO implementa ContratoEmpleado: ' . get_class($empleado));
+        }
+
+        return $empleado;
+    }
+
+    /**
+     * Obtener todos los empleados.
+     *
+     * @return array
+     */
+    public function listarTodos(): array
+    {
+        $empleados = [];
+        $modelos = EmpleadoModel::all();
+        foreach ($modelos as $modelo) {
+            $empleado = $this->obtener($modelo->id);
+            if ($empleado) {
+                $empleados[] = $empleado;
+            }
+        }
+        return $empleados;
     }
 }

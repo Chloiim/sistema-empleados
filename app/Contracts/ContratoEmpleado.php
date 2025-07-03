@@ -9,5 +9,8 @@ interface ContratoEmpleado
      *
      * @return float
      */
+    public function getId(): string;
+    public function getNombre(): string;
+    public function getInfoContacto(): string;
     public function calcularSalario(): float;
 }

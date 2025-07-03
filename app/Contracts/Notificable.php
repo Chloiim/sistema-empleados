@@ -10,5 +10,5 @@ interface Notificable
      * @param string $mensaje
      * @return void
      */
-    public function enviarNotificacion(string $mensaje): void;
+    public function enviar(ContratoEmpleado $empleado, float $salario): bool;
 }

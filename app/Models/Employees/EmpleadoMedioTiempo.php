@@ -7,7 +7,7 @@ class EmpleadoMedioTiempo extends Empleado
     protected $tarifaHora;
     protected $horasTrabajadas;
 
-    public function __construct(string $id, string $nombre, string $infoContacto, float $tarifaHora, float $horasTrabajadas)
+    public function __construct(?int $id, string $nombre, string $infoContacto, float $tarifaHora, float $horasTrabajadas)
     {
         parent::__construct($id, $nombre, $infoContacto);
         $this->tarifaHora = $tarifaHora;

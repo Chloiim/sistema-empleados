@@ -13,7 +13,7 @@ class CreatePagosTable extends Migration
     {
         Schema::create('pagos', function (Blueprint $table) {
             $table->id();
-            $table->string('empleado_id');
+            $table->unsignedBigInteger('empleado_id');
             $table->decimal('monto', 10, 2); // En PEN (soles)
             $table->dateTime('fecha');
             $table->text('reporte_generado')->nullable();
