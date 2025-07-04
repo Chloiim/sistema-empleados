@@ -4,13 +4,15 @@ namespace App\Contracts;
 
 interface ContratoEmpleado
 {
-    /**
-     * Calcular el salario del empleado en PEN (soles).
-     *
-     * @return float
-     */
+    //Obtener el ID del empleado.
     public function getId(): string;
+
+    //Obtener el nombre del empleado.
     public function getNombre(): string;
+
+    //Obtener la información de contacto.
     public function getInfoContacto(): string;
+
+    //Calcular el salario del empleado.
     public function calcularSalario(): float;
 }
