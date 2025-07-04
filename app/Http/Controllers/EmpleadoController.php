@@ -127,14 +127,16 @@ class EmpleadoController extends Controller
         if (!$empleado) {
             return redirect()->route('empleados.index')->withErrors(['error' => 'Empleado no encontrado']);
         }
-        $this->generadorReporte->setReporteable(new \App\Services\Reports\ReportePDF());
+        $this->generadorReporte->setReporteable(new ReportePDF());
         $datos = [
             'nombre' => $empleado->getNombre(),
             'salario' => $empleado->calcularSalario(),
             'fecha' => now()->format('d/m/Y H:i'),
         ];
         $pdf = $this->generadorReporte->generar($datos);
-        return response($pdf)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'attachment; filename="reporte_' . $empleado->getId() . '.pdf"');
+        return response($pdf)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="reporte_' . $empleado->getId() . '.pdf"');
     }
 
     /**
@@ -146,12 +148,15 @@ class EmpleadoController extends Controller
         if (!$empleado) {
             return redirect()->route('empleados.index')->withErrors(['error' => 'Empleado no encontrado']);
         }
-        $this->generadorReporte->setReporteable(new \App\Services\Reports\ReporteExcel());
+        $this->generadorReporte->setReporteable(new ReporteExcel());
         $datos = [
             ['Nombre', 'Salario', 'Fecha'],
             [$empleado->getNombre(), $empleado->calcularSalario(), now()->format('d/m/Y H:i')],
         ];
-        return $this->generadorReporte->generar($datos);
+        $excel = $this->generadorReporte->generar($datos);
+        return response($excel)
+            ->header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            ->header('Content-Disposition', 'attachment; filename="reporte_' . $empleado->getId() . '.xlsx"');
     }
 
     /**
@@ -178,7 +183,11 @@ class EmpleadoController extends Controller
      */
     public function edit($id)
     {
-        // Se implementará en Hito 6
+        $empleado = $this->sistema->obtenerEmpleado($id);
+        if (!$empleado) {
+            return redirect()->route('empleados.index')->withErrors(['error' => 'Empleado no encontrado']);
+        }
+        return view('empleados.edit', compact('empleado'));
     }
 
     /**
@@ -186,7 +195,48 @@ class EmpleadoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Se implementará en Hito 6
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'info_contacto' => 'required|string|max:255',
+            'salario_mensual' => 'required_if:tipo,tiempo_completo|numeric|min:0',
+            'tarifa_hora' => 'required_if:tipo,medio_tiempo|numeric|min:0',
+            'horas_trabajadas' => 'required_if:tipo,medio_tiempo|numeric|min:0',
+            'monto_contrato' => 'required_if:tipo,contratista|numeric|min:0',
+        ]);
+
+        $empleadoExistente = $this->sistema->obtenerEmpleado($id);
+        if (!$empleadoExistente) {
+            return redirect()->route('empleados.index')->withErrors(['error' => 'Empleado no encontrado']);
+        }
+
+        // Obtener el modelo de la base de datos
+        $modelo = \App\Models\EmpleadoModel::find($id);
+        if (!$modelo) {
+            return redirect()->route('empleados.index')->withErrors(['error' => 'Error al encontrar el registro']);
+        }
+
+        $modelo->nombre = $request->nombre;
+        $modelo->info_contacto = $request->info_contacto;
+
+        // Actualizar datos adicionales según el tipo
+        $datosAdicionales = $modelo->datos_adicionales;
+        switch (class_basename($empleadoExistente)) {
+            case 'EmpleadoTiempoCompleto':
+                $datosAdicionales['salario_mensual'] = $request->salario_mensual ?? $empleadoExistente->calcularSalario();
+                break;
+            case 'EmpleadoMedioTiempo':
+                $datosAdicionales['tarifa_hora'] = $request->tarifa_hora ?? 0.0;
+                $datosAdicionales['horas_trabajadas'] = $request->horas_trabajadas ?? 0.0;
+                break;
+            case 'Contratista':
+                $datosAdicionales['monto_contrato'] = $request->monto_contrato ?? 0.0;
+                break;
+        }
+
+        $modelo->datos_adicionales = $datosAdicionales;
+        $modelo->save();
+
+        return redirect()->route('empleados.index')->with('success', 'Empleado actualizado exitosamente.');
     }
 
     /**
@@ -194,6 +244,11 @@ class EmpleadoController extends Controller
      */
     public function destroy($id)
     {
-        // Se implementará en Hito 6
+        $empleado = $this->sistema->obtenerEmpleado($id);
+        if ($empleado) {
+            $this->sistema->eliminarEmpleado($id);
+            return redirect()->route('empleados.index')->with('success', 'Empleado eliminado exitosamente.');
+        }
+        return redirect()->route('empleados.index')->withErrors(['error' => 'Empleado no encontrado']);
     }
 }

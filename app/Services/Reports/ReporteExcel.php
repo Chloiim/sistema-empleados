@@ -1,6 +1,6 @@
 <?php
 
-namespace AApp\Services\Reports;
+namespace App\Services\Reports;
 
 use App\Contracts\Reporteable;
 use Maatwebsite\Excel\Facades\Excel;
@@ -14,7 +14,7 @@ class ReporteExcel implements Reporteable
      * @param array $datos
      * @return string
      */
-    public function generarReporte(array $datos): string
+    public function generar(array $datos): string
     {
         $export = new EmpleadoExport($datos);
         return Excel::raw($export, \Maatwebsite\Excel\Excel::XLSX);

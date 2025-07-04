@@ -80,4 +80,15 @@ class SistemaGestionEmpleados
         }
         return 0.0;
     }
+
+    /**
+     * Eliminar un empleado del sistema.
+     *
+     * @param int $id
+     * @return void
+     */
+    public function eliminarEmpleado(int $id): void
+    {
+        $this->repositorio->eliminar($id);
+    }
 }

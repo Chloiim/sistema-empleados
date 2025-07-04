@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agregar Empleado</title>
+    <title>Crear Empleado</title>
     @vite(['resources/scss/app.scss', 'resources/js/app.js'])
 </head>
 <body>
     <div class="container mt-4">
-        <h1 class="mb-4">Agregar Nuevo Empleado</h1>
+        <h1 class="mb-4">Crear Empleado</h1>
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -18,62 +23,69 @@
                 </ul>
             </div>
         @endif
-        <form method="POST" action="{{ route('empleados.store') }}">
+
+        <form action="{{ route('empleados.store') }}" method="POST" id="empleadoForm">
             @csrf
             <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" name="nombre" id="nombre" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label for="info_contacto" class="form-label">Información de Contacto (Email/Teléfono)</label>
-                <input type="text" name="info_contacto" id="info_contacto" class="form-control" required>
+                <input type="text" name="nombre" id="nombre" class="form-control" value="{{ old('nombre') }}" required>
             </div>
             <div class="mb-3">
                 <label for="tipo" class="form-label">Tipo de Empleado</label>
-                <select name="tipo" id="tipo" class="form-control" required onchange="toggleFields()">
-                    <option value="tiempo_completo">Tiempo Completo</option>
-                    <option value="medio_tiempo">Medio Tiempo</option>
-                    <option value="contratista">Contratista</option>
+                <select name="tipo" id="tipo" class="form-control" required>
+                    <option value="tiempo_completo" {{ old('tipo') == 'tiempo_completo' ? 'selected' : '' }}>Tiempo Completo</option>
+                    <option value="medio_tiempo" {{ old('tipo') == 'medio_tiempo' ? 'selected' : '' }}>Medio Tiempo</option>
+                    <option value="contratista" {{ old('tipo') == 'contratista' ? 'selected' : '' }}>Contratista</option>
                 </select>
             </div>
-            <div id="tiempo_completo_fields" class="mb-3" style="display: none;">
-                <label for="salario_mensual" class="form-label">Salario Mensual (PEN)</label>
-                <input type="number" step="0.01" name="salario_mensual" id="salario_mensual" class="form-control" value="0.00">
+            <div class="mb-3">
+                <label for="info_contacto" class="form-label">Contacto</label>
+                <input type="text" name="info_contacto" id="info_contacto" class="form-control" value="{{ old('info_contacto') }}" required>
             </div>
-            <div id="medio_tiempo_fields" class="mb-3" style="display: none;">
-                <label for="tarifa_hora" class="form-label">Tarifa por Hora (PEN)</label>
-                <input type="number" step="0.01" name="tarifa_hora" id="tarifa_hora" class="form-control" value="0.00">
-                <label for="horas_trabajadas" class="form-label">Horas Trabajadas</label>
-                <input type="number" step="0.01" name="horas_trabajadas" id="horas_trabajadas" class="form-control" value="0.00">
+            <div id="campos_adicionales" class="mb-3">
+                @if (old('tipo') == 'tiempo_completo' || !old('tipo'))
+                    <label for="salario_mensual" class="form-label">Salario Mensual (PEN)</label>
+                    <input type="number" step="0.01" name="salario_mensual" id="salario_mensual" class="form-control" value="{{ old('salario_mensual', 0) }}" required>
+                @elseif (old('tipo') == 'medio_tiempo')
+                    <label for="tarifa_hora" class="form-label">Tarifa por Hora (PEN)</label>
+                    <input type="number" step="0.01" name="tarifa_hora" id="tarifa_hora" class="form-control" value="{{ old('tarifa_hora', 0) }}" required>
+                    <label for="horas_trabajadas" class="form-label">Horas Trabajadas</label>
+                    <input type="number" step="0.01" name="horas_trabajadas" id="horas_trabajadas" class="form-control" value="{{ old('horas_trabajadas', 0) }}" required>
+                @elseif (old('tipo') == 'contratista')
+                    <label for="monto_contrato" class="form-label">Monto del Contrato (PEN)</label>
+                    <input type="number" step="0.01" name="monto_contrato" id="monto_contrato" class="form-control" value="{{ old('monto_contrato', 0) }}" required>
+                @endif
             </div>
-            <div id="contratista_fields" class="mb-3" style="display: none;">
-                <label for="monto_contrato" class="form-label">Monto del Contrato (PEN)</label>
-                <input type="number" step="0.01" name="monto_contrato" id="monto_contrato" class="form-control" value="0.00">
-            </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="submit" class="btn btn-primary">Crear</button>
+            <a href="{{ route('empleados.index') }}" class="btn btn-secondary">Cancelar</a>
         </form>
-    </div>
-    <script>
-        function toggleFields() {
-            const tipo = document.getElementById('tipo').value;
-            document.getElementById('tiempo_completo_fields').style.display = tipo === 'tiempo_completo' ? 'block' : 'none';
-            document.getElementById('medio_tiempo_fields').style.display = tipo === 'medio_tiempo' ? 'block' : 'none';
-            document.getElementById('contratista_fields').style.display = tipo === 'contratista' ? 'block' : 'none';
 
-            // Establecer valores predeterminados cuando se ocultan
-            if (tipo !== 'tiempo_completo') {
-                document.getElementById('salario_mensual').value = '0.00';
-            }
-            if (tipo !== 'medio_tiempo') {
-                document.getElementById('tarifa_hora').value = '0.00';
-                document.getElementById('horas_trabajadas').value = '0.00';
-            }
-            if (tipo !== 'contratista') {
-                document.getElementById('monto_contrato').value = '0.00';
-            }
-        }
-        // Ejecutar al cargar la página
-        toggleFields();
-    </script>
+        <script>
+            document.getElementById('tipo').addEventListener('change', function() {
+                const tipo = this.value;
+                const campos = document.getElementById('campos_adicionales');
+                campos.innerHTML = ''; // Limpiar campos anteriores
+
+                if (tipo === 'tiempo_completo') {
+                    campos.innerHTML = `
+                        <label for="salario_mensual" class="form-label">Salario Mensual (PEN)</label>
+                        <input type="number" step="0.01" name="salario_mensual" id="salario_mensual" class="form-control" value="0" required>
+                    `;
+                } else if (tipo === 'medio_tiempo') {
+                    campos.innerHTML = `
+                        <label for="tarifa_hora" class="form-label">Tarifa por Hora (PEN)</label>
+                        <input type="number" step="0.01" name="tarifa_hora" id="tarifa_hora" class="form-control" value="0" required>
+                        <label for="horas_trabajadas" class="form-label">Horas Trabajadas</label>
+                        <input type="number" step="0.01" name="horas_trabajadas" id="horas_trabajadas" class="form-control" value="0" required>
+                    `;
+                } else if (tipo === 'contratista') {
+                    campos.innerHTML = `
+                        <label for="monto_contrato" class="form-label">Monto del Contrato (PEN)</label>
+                        <input type="number" step="0.01" name="monto_contrato" id="monto_contrato" class="form-control" value="0" required>
+                    `;
+                }
+            });
+        </script>
+    </div>
 </body>
 </html>

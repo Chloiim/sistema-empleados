@@ -47,6 +47,12 @@
                         <td>S/{{ number_format($empleado->calcularSalario(), 2) }}</td>
                         <td>
                             <a href="{{ route('empleados.show', $empleado->getId()) }}" class="btn btn-info btn-sm">Ver</a>
+                            <a href="{{ route('empleados.edit', $empleado->getId()) }}" class="btn btn-warning btn-sm">Editar</a>
+                            <form action="{{ route('empleados.destroy', $empleado->getId()) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este empleado?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
                             <a href="{{ route('empleados.reporte.pdf', $empleado->getId()) }}" class="btn btn-warning btn-sm">PDF</a>
                             <a href="{{ route('empleados.reporte.excel', $empleado->getId()) }}" class="btn btn-success btn-sm">Excel</a>
                             <a href="{{ route('empleados.reporte.json', $empleado->getId()) }}" class="btn btn-secondary btn-sm">JSON</a>

@@ -12,7 +12,7 @@ class ReporteJSON implements Reporteable
      * @param array $datos
      * @return string
      */
-    public function generarReporte(array $datos): string
+    public function generar(array $datos): string
     {
         return json_encode($datos, JSON_PRETTY_PRINT);
     }

@@ -10,5 +10,5 @@ interface Reporteable
      * @param array $datos
      * @return string
      */
-    public function generarReporte(array $datos): string;
+    public function generar(array $datos): string;
 }

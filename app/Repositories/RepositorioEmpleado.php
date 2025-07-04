@@ -34,6 +34,17 @@ class RepositorioEmpleado
     }
 
     /**
+     * Eliminar un empleado de la base de datos.
+     *
+     * @param int $id
+     * @return void
+     */
+    public function eliminar(int $id): void
+    {
+        EmpleadoModel::destroy($id);
+    }
+    
+    /**
      * Obtener un empleado por ID.
      *
      * @param int $id

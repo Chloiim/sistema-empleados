@@ -30,8 +30,11 @@ class GeneradorReporte
      * @param array $datos
      * @return string
      */
-    public function generar(array $datos): string
+    public function generar(array $datos): mixed
     {
-        return $this->reporteable->generarReporte($datos);
+        if ($this->reporteable) {
+            return $this->reporteable->generar($datos);
+        }
+        throw new \Exception('No se ha establecido un reporteable');
     }
 }
